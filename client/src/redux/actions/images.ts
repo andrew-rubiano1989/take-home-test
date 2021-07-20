@@ -22,7 +22,7 @@ export const queryImages = async (searchText: string) => {
         Axios.get(baseUrl + `/images?search=${encodeURIComponent(searchText)}`).then((response: any) => {
             store.dispatch({
                 type: ImageActionType.SET_IMAGES,
-                searchText,
+                searchTerm: searchText,
                 images: response.data.images
             })
             resolve();
@@ -38,7 +38,8 @@ export const uploadImage = async (image: File) => {
         Axios.post(baseUrl + '/image', formData, {headers: {'content-type': 'multipart/form-data'}}).then((response: any) => {
             store.dispatch({
                 type: ImageActionType.SET_IMAGES,
-                images: [image]
+                images: [image],
+                searchTerm: store.getState().images.searchTerm
             })
             resolve();
         }).catch(reject)

@@ -1,5 +1,5 @@
 import { Button, createStyles, Grid, Input, Theme, withStyles } from "@material-ui/core";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { ModalActions } from "../redux/actions/modal";
 import {debounce} from 'debounce';
@@ -17,43 +17,43 @@ const styles = (theme: Theme) => createStyles({
 
 interface HeaderRawProps {
     classes: any;
+    openModalCallback: () => void;
 }
 
-export class HeaderRaw extends React.Component<HeaderRawProps> {
-    handleSearchInput = debounce((value: string) => {
+export const HeaderRaw: React.FC<HeaderRawProps> = (props: HeaderRawProps) => {
+    const handleSearchInput = debounce((value: string) => {
         ImageActions.queryImages(value);
     }, 400);
 
-    openUploadModal = () => {
-        ModalActions.openUploadModal();
-    }
+    const openUploadModal = useCallback(() => {
+        if(props.openModalCallback) {
+            props.openModalCallback();
+        }
+        else {
+            ModalActions.openUploadModal();
+        }
+    }, []);
 
-    handleModalClose = () => {
-        ModalActions.closeUploadModal();
-    }
+    const {classes} = props;
 
-    render() {
-        const {classes} = this.props;
-
-        return (
-            <div className={classes.headerContainer}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6}>
-                        <Input fullWidth type="text" 
-                            placeholder="Seach for images" 
-                            onChange={(event: any) => this.handleSearchInput(event.target.value)}/>
-                    </Grid>
-                    <Grid item xs={12} sm={6} className={classes.buttonContainer}>
-                        <Button 
-                            onClick={this.openUploadModal} 
-                            color="primary" 
-                            variant="contained" 
-                            startIcon={<CloudUploadIcon />}>UPLOAD</Button>
-                    </Grid>
+    return (
+        <div className={classes.headerContainer}>
+            <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                    <Input id="searchField" fullWidth type="text" 
+                        placeholder="Search for images" 
+                        onChange={(event: any) => handleSearchInput(event.target.value)}/>
                 </Grid>
-            </div>
-        )
-    }
+                <Grid item xs={12} sm={6} className={classes.buttonContainer}>
+                    <Button 
+                        onClick={openUploadModal} 
+                        color="primary" 
+                        variant="contained" 
+                        startIcon={<CloudUploadIcon />}>UPLOAD</Button>
+                </Grid>
+            </Grid>
+        </div>
+    )
 }
 
 export const Header = withStyles(styles)(HeaderRaw)

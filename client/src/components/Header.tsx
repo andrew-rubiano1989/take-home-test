@@ -1,5 +1,5 @@
 import { Button, createStyles, Grid, Input, Theme, withStyles } from "@material-ui/core";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { ModalActions } from "../redux/actions/modal";
 import {debounce} from 'debounce';
@@ -17,7 +17,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface HeaderRawProps {
     classes: any;
-    openModalCallback: () => void;
+    openModalCallback?: () => void;
 }
 
 export const HeaderRaw: React.FC<HeaderRawProps> = (props: HeaderRawProps) => {
